@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:chewie/src/animated_play_pause.dart';
 import 'package:flutter/material.dart';
 
@@ -35,17 +37,49 @@ class CenterPlayButton extends StatelessWidget {
               ),
               // Always set the iconSize on the IconButton, not on the Icon itself:
               // https://github.com/flutter/flutter/issues/52980
-              child: IconButton(
-                iconSize: 32,
-                padding: const EdgeInsets.all(12.0),
-                icon: isFinished
-                    ? Icon(Icons.replay, color: iconColor)
-                    : AnimatedPlayPause(
-                        color: iconColor,
-                        playing: isPlaying,
+              child:
+              GestureDetector(
+                onTap: onPressed,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(48 * 100),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: const BoxDecoration(shape: BoxShape.circle),
+                      child: Container(
+                          padding: const EdgeInsetsDirectional.all(4),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          child:
+                          isFinished
+                              ? const Icon(Icons.replay
+                              ,
+                            color: Color(0xFFCB0107),
+
+                          )
+                              : AnimatedPlayPause(
+                                  color: iconColor,
+                                  playing: isPlaying,
+                                )
                       ),
-                onPressed: onPressed,
-              ),
+                    ),
+                  ),
+                ),
+              )
+              // IconButton(
+              //   iconSize: 32,
+              //   // padding: const EdgeInsets.all(12.0),
+              //   icon: isFinished
+              //       ? Icon(Icons.replay, color: iconColor)
+              //       : AnimatedPlayPause(
+              //           color: iconColor,
+              //           playing: isPlaying,
+              //         ),
+              //   onPressed: onPressed,
+              // ),
             ),
           ),
         ),

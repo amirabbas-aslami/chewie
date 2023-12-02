@@ -47,7 +47,7 @@ class AnimatedPlayPauseState extends State<AnimatedPlayPause>
   Widget build(BuildContext context) {
     return Center(
       child: AnimatedIcon(
-        color: widget.color,
+        color: const Color(0xFFCB0107),
         size: widget.size,
         icon: AnimatedIcons.play_pause,
         progress: animationController,

@@ -4,6 +4,7 @@ import 'package:chewie/src/notifiers/index.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+// import 'package:video_player/video_player.dart';
 
 class PlayerWithControls extends StatelessWidget {
   const PlayerWithControls({Key? key}) : super(key: key);
@@ -67,7 +68,7 @@ class PlayerWithControls extends StatelessWidget {
                   ),
                   child: const DecoratedBox(
                     decoration: BoxDecoration(color: Colors.black54),
-                    child: SizedBox.expand(),
+                    child: SizedBox(),
                   ),
                 ),
               ),
@@ -83,18 +84,15 @@ class PlayerWithControls extends StatelessWidget {
       );
     }
 
-    return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      return Center(
-        child: SizedBox(
-          height: constraints.maxHeight,
-          width: constraints.maxWidth,
-          child: AspectRatio(
-            aspectRatio: calculateAspectRatio(context),
-            child: buildPlayerWithControls(chewieController, context),
-          ),
+    return Center(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: AspectRatio(
+          aspectRatio: calculateAspectRatio(context),
+          child: buildPlayerWithControls(chewieController, context),
         ),
-      );
-    });
+      ),
+    );
   }
 }

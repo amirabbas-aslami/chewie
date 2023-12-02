@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:video_player/video_player.dart';
 import 'package:chewie/src/animated_play_pause.dart';
 import 'package:chewie/src/center_play_button.dart';
 import 'package:chewie/src/chewie_player.dart';
@@ -15,7 +16,7 @@ import 'package:chewie/src/notifiers/index.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:video_player/video_player.dart';
+// import 'package:video_player/video_player.dart';
 
 class CupertinoControls extends StatefulWidget {
   const CupertinoControls({
@@ -49,7 +50,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
   bool _subtitleOn = false;
   Timer? _bufferingDisplayTimer;
   bool _displayBufferingIndicator = false;
-  double selectedSpeed = 1.0;
+
   late VideoPlayerController controller;
 
   // We know that _chewieController is set in didChangeDependencies
@@ -99,25 +100,49 @@ class _CupertinoControlsState extends State<CupertinoControls>
                 )
               else
                 _buildHitArea(),
+              Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: AnimatedOpacity(
+                    opacity: notifier.hideStuff ? 0.0 : 1.0,
+                    duration: Duration(
+                        milliseconds: 200
+                    ),
+                    child: Container(
+                      color: Colors.black26,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: const RotatedBox(
+                                quarterTurns: 2, child: Icon(Icons.arrow_back_rounded)),
+                            color: Colors.white,
+                            splashColor: Colors.white12,
+                            splashRadius: 32,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+              ),
               Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  _buildTopBar(
-                    backgroundColor,
-                    iconColor,
-                    barHeight,
-                    buttonPadding,
-                  ),
-                  const Spacer(),
                   if (_subtitleOn)
                     Transform.translate(
                       offset: Offset(
                         0.0,
                         notifier.hideStuff ? barHeight * 0.8 : 0.0,
                       ),
-                      child: _buildSubtitles(chewieController.subtitle!),
+                      child:
+                      _buildSubtitles(chewieController.subtitle!),
                     ),
-                  _buildBottomBar(backgroundColor, iconColor, barHeight),
+                  _buildBottomBar(backgroundColor, iconColor,barHeight),
+                  // SizedBox(height: 36,)
                 ],
               ),
             ],
@@ -372,7 +397,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
   }
 
   GestureDetector _buildMuteButton(
-    VideoPlayerController controller,
+      VideoPlayerController controller,
     Color backgroundColor,
     Color iconColor,
     double barHeight,
@@ -418,7 +443,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
   }
 
   GestureDetector _buildPlayPause(
-    VideoPlayerController controller,
+      VideoPlayerController controller,
     Color iconColor,
     double barHeight,
   ) {
@@ -539,7 +564,7 @@ class _CupertinoControlsState extends State<CupertinoControls>
   }
 
   GestureDetector _buildSpeedButton(
-    VideoPlayerController controller,
+      VideoPlayerController controller,
     Color iconColor,
     double barHeight,
   ) {
@@ -559,8 +584,6 @@ class _CupertinoControlsState extends State<CupertinoControls>
 
         if (chosenSpeed != null) {
           controller.setPlaybackSpeed(chosenSpeed);
-
-          selectedSpeed = chosenSpeed;
         }
 
         if (_latestValue.isPlaying) {
@@ -683,9 +706,6 @@ class _CupertinoControlsState extends State<CupertinoControls>
 
             _hideTimer?.cancel();
           },
-          onDragUpdate: () {
-            _hideTimer?.cancel();
-          },
           onDragEnd: () {
             setState(() {
               _dragging = false;
@@ -750,30 +770,20 @@ class _CupertinoControlsState extends State<CupertinoControls>
     });
   }
 
-  Future<void> _skipBack() async {
+  void _skipBack() {
     _cancelAndRestartTimer();
     final beginning = Duration.zero.inMilliseconds;
     final skip =
         (_latestValue.position - const Duration(seconds: 15)).inMilliseconds;
-    await controller.seekTo(Duration(milliseconds: math.max(skip, beginning)));
-    // Restoring the video speed to selected speed
-    // A delay of 1 second is added to ensure a smooth transition of speed after reversing the video as reversing is an asynchronous function
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      controller.setPlaybackSpeed(selectedSpeed);
-    });
+    controller.seekTo(Duration(milliseconds: math.max(skip, beginning)));
   }
 
-  Future<void> _skipForward() async {
+  void _skipForward() {
     _cancelAndRestartTimer();
     final end = _latestValue.duration.inMilliseconds;
     final skip =
         (_latestValue.position + const Duration(seconds: 15)).inMilliseconds;
-    await controller.seekTo(Duration(milliseconds: math.min(skip, end)));
-    // Restoring the video speed to selected speed
-    // A delay of 1 second is added to ensure a smooth transition of speed after forwarding the video as forwaring is an asynchronous function
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      controller.setPlaybackSpeed(selectedSpeed);
-    });
+    controller.seekTo(Duration(milliseconds: math.min(skip, end)));
   }
 
   void _startHideTimer() {

@@ -14,6 +14,7 @@ import 'package:chewie/src/notifiers/index.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+// import 'package:video_player/video_player.dart';
 
 class MaterialDesktopControls extends StatefulWidget {
   const MaterialDesktopControls({
@@ -383,7 +384,7 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
   }
 
   GestureDetector _buildMuteButton(
-    VideoPlayerController controller,
+      VideoPlayerController controller,
   ) {
     return GestureDetector(
       onTap: () {
@@ -573,9 +574,6 @@ class _MaterialDesktopControlsState extends State<MaterialDesktopControls>
             _dragging = true;
           });
 
-          _hideTimer?.cancel();
-        },
-        onDragUpdate: () {
           _hideTimer?.cancel();
         },
         onDragEnd: () {
